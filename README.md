@@ -2,10 +2,117 @@
 ---
 https://github.com/mailru/FileAPI
 
-```
-```
+```js
+var choose = document.getElementById('choose');
+FileAPI.event.on(choose, 'change', function(evt){
+  var files = FileAPI.getFiles(evt);
+  FileAPI.filterFiles(files, function(file, info/**/){
+    if( /^image/.test(file.type) ){
+      return info.width >= 320 && info.height >= 240;
+    }
+    return false;
+  }, function(files/**/, rejected/**/){
+    if( files.length ){
+      FileAPI.each(files, function(file){
+        FileAPI.Image(file).preview(100).get(function(err, img){
+          images.appendChild(img);
+        });
+      });
+      FileAPI.upload({
+        url: './ctrl.php',
+        files: { images: files },
+        progress: function(evt){ /**/ },
+        complete: function(err, xhr){ /**/ }
+      });
+    }
+  });
+})
+
+window.FileAPI = {
+  debug: false
+  , cors: false
+  , media: false
+  , staticPath: '/js/FileAPI/'
+  , postNameConcat: function(name, idx){
+    return name + (idx != null ? '[' + idx + ']' : '');
+  }
+};
+
+window.FileAPI = { /**/ };
+require(['FileAPI'], function (FileAPI){
+});
+
+var el = document.getElement('my-input');
+FileAPI.event.on(el, 'change', function(evt/**/){
+  var files = FileAPI.getFiles(el);
+  var files = FileAPI.getFile(evt);
+});
+
+FileAPI.getInfo(file, function(err/**/, info/**/){
+  if( !err ){
+    console.log(info);
+  }
+});
+FileAPI.getInfo(file, function(err/**/, info/**/){
+  if( !err ){
+    console.log(info);
+  }
+});
+
+var files FileAPI.getFiles(input);
+FileAPI.filterFiles(files, function (file/**/, info/**/){
+  if(/^image/.test(file.type) && info ){
+    return info.width > 320 && info.height > 240;
+  } else {
+    return file.size < 20 * FileAPI.MB;
+  }
+}, function(list/**/, other/**/){
+  if(list.length){
+  }
+});
+
+FileAPI.event.on(document, 'drop', function(evt/**/){
+  evt.preventDefault();
+  FileAPI.getDropFiles(evt, function(files/**/){
+  });
+});
+
+var el = document.getElementById('my-input');
+FileAPI.event.on(el, 'change', function(evt/**/){
+  var files = FileAPI.getFiles(evt);
+  var xhr = FileAPI.upload({
+    url: 'http://rubaxa.org/FileAPI/server/ctrl.php',
+    files: { file: files[0] },
+    complete: function(err, xhr){
+      if( !err ){
+        var result = xhr.responseText;
+      }
+    }
+  });
+});
+
+FileAPI.addInfoReader();
+
+
+
+
+
+
 
 ```
+
+```jsonp
+(function(ctx, jsonp){
+  'use strict';
+  var status = {{httpStatus}}, statusText = "", response = "";
+  try{
+  } catch(e){
+    var data = "";
+    try{
+      ctx.postMessage(data, document.referrer);
+    } catch(e){}
+  }  
+})(window.parent, '{{request_param_callback}}');
 ```
 
 ```css
