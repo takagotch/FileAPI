@@ -91,13 +91,315 @@ FileAPI.event.on(el, 'change', function(evt/**/){
   });
 });
 
-FileAPI.addInfoReader();
+FileAPI.addInfoReader(/^image/, function (file/**/, callback/**/){
+  FileAPI.readAsBinaryString(file, function(evt/**/){
+    if( evt.type == 'load' ){
+      var binaryString = evt.result;
+      var oFile = new BinaryFile(binaryString, 0, file.size);
+      var exif = EXIF.readFromBinaryFile(oFile);
+      callback(false, { 'exif': exif || {} });
+    }
+    else if( evt.type == 'error' ){
+      callback('read_as_binary_string');
+    }
+    else if( evt.type == 'progress' ){
+    }
+  });
+});
 
+FileAPI.readAsDataURL(file, function(evt/**/){
+  if(evt.type == 'load' ){
+    var dataURL = evt.result;
+  } else if( evt.type =='progress' ){
+    var pr = evt.loaded/evt.total * 100;
+  } else {
+  }
+})
 
+FileAPI.readAsBinaryString(file, function(evt/**/){
+  if( evt.type == 'load' ){
+    var binaryString = evt.result;
+  } else if(evt.type == 'progress'){
+    var pr = evt.loaded/evt.total * 100;
+  }
+})
 
+FileAPI.readAsArrayBuffer(file, function(evt/**/){
+  if( evt.type == 'load' ){
+    var arrayBuffer = evt.result;
+  } else if(evt.type == 'progress' ){
+    var pr = evt.loaded/evt.total * 100;
+  } else {
+  }
+})
 
+FileAPI.readAsText(file, function(evt/**/){
+  if( evt.type == 'load' ){
+    var text = evt.result;
+  } else if( evt.type == 'progress' ){
+    var pr = evt.loaded/evt.total * 100;
+  } else {
+  }
+})
 
+FileAPI.readAsText(file, "utf-8", function(evt/**/){
+  if( evt.type == 'load' ){
+    var text = evt.result;
+  } else if( evt.type == 'progress' ){
+    var pr = evt.loaded/evt.total * 100;
+  }
+})
 
+var xhr = FileAPI.upload({
+  url: '',
+  data: { 'session-id': 123 },
+  files: {},
+});
+
+var xhr = FileAPI.upload({
+  url: '...',
+  data: { 'x-upload': 'fileapi' },
+  files: {},
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: {
+    audio: files
+  }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: { images: fileList },
+  chunkSize: 0.5 * FileAPI.MB
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: { images: fileList },
+  chunkSize: 0.5 * FileAPI.MB,
+  chunkUploadRetry: 3
+});
+
+var xhr = FileAPI.upload({
+ url: '',
+ files: { image: imageFiles },
+ imageTransform: {
+   maxWidth: 800,
+   maxHeight: 600,
+   overlay: [{ x: 10, y: 10, src: '/i/watemark.png', rel: FileAPI.Image.RIGHT_BOTTOM }]
+ }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: { image: imageFiles },
+  imageTransform: {
+    'huge': { maxWidth: 800, maxHeight: 600 },
+    'medium': { width: 320, height: 240, preview: true },
+    'small': {
+      width: 100, height: 100,
+      overlay: [{ x: 5, y: 5, src: '/i/watermark.png', rel: FileAPI.Image.RIGHT_BOTTOM}]
+    }
+  }
+});
+
+var xhr = FileAPI.upload({
+ url: '',
+ files: { image: imageFiles },
+ imageTransform: {
+   type: 'image/jpeg',
+   quality: 0.86
+ }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: {}
+  prepare: function(file/**/, options/**/){
+    options.data.secret = utils.getSecretKey(file.name);
+  }
+});
+
+var xhr = FileAPI.uplaod({
+  url: '',
+  files: {}
+  upload: function(xhr/**/, options/**/){
+  }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: {}
+  upload: function(file/**/, xhr/**/, options/**/){
+  }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: {}
+  progress: function(evt/**/, file/**/, options/**/){
+    var pr = evt.loaded/evt.total * 100;
+  }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: {}
+  fileprogress: function(evt/**/, file/**/, xhr/**/, options/**/){
+    var pr = evt.loaded/evt.total * 100;
+  }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: {}
+  complete: function(err/**/, xhr/**/, file/**/, options/**/){
+    if( !err ){
+    }
+  }
+});
+
+var xhr = FileAPI.upload({
+  url: '',
+  files: {}
+  filecomplete: function(err/**/, xhr/**/, file/**/, options/**/){
+    if( !err ){
+      var result = xhr.responseText;
+    }
+  }
+});
+
+var el = document.getElementById('dropzone');
+FileAPI.event.dnd(el, function(over){
+  el.style.backgroundColor = over ? '': '';
+}, function(files){
+  if(files.length){
+  }
+});
+$('#dropzone').dnd(hoverFn, dropFn)
+
+FileAPI.event.dnd.off(el, hoverFn, dropFn)
+$('#dropzone').dndoff(hoverFn, dropFn)
+
+FileAPI.Image(imageFile).get(function(err/**/, img/**/){
+  if( !err ){
+    document.body.appendChild( img );
+  }
+});
+
+FileAPI.Image(iamgeFile)
+  .crop(640, 480)
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+FileAPI.Image(imageFile)
+  .crop(100, 50, 320, 240)
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+FileAPI.Image(imageFile)
+  .resize(320, 240)
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+FileAPI.Image(imageFile)
+  .resize(320, 240, 'max')
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+FileAPI.Image(imgeFile)
+  .resize(240, 'height')
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+FileAPI.Image(imageFile)
+  .preview(100, 100)
+  .get(funcion(err/**/, img/**/){
+  
+  })
+;
+
+FileAPI.Image(imageFile)
+  .rotate(90)
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+FileAPI.Image(imageFile)
+  .filter(function(canvas/**/, doneFn/**/){
+    doneFn();
+  })
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+Caman.Filter.register("my-funky-filter", function(){
+});
+FileAPI.Image(imageFile)
+  .filter("my-funky-filter")
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+FileAPI.Image(imageFile)
+  .overlay({
+    { x: 10, y: 10, w: 100, h: 10, src: '/i/watermark.png' },
+    { x: 10, y: 10, src: '/i/watermark.png', rel: FileAPI.Image.RIGHT_BOTTOM }
+  })
+  .get(function(err/**/, img/**/){
+  
+  })
+;
+
+var el = document.getElementById('cam');
+FileAPI.Camera.publish(el, {width: 320, height: 240 }, function(err, cam/**/){
+  if( !err ){
+  }
+});
+
+var el = document.getElementById('cam');
+FileAPI.Camera.publish(el, { start: false }, function(err, cam/**/){
+  if( !err ){
+    cam.start(function(err){
+      if( !err ){
+      }
+    });
+  }
+});
+
+var el = document.getElementById('cam');
+FileAPI.Camera.publish(el, function(err, cam/**/){
+  if( !err ){
+    var shot = cam.shot();
+    shot.preview(100).get(function(err, img){
+      previews.appendChild(img);
+    });
+    FileAPI.upload({
+      url: '',
+      files: { cam: shot
+    });
+  }
+});
+
+var FileAPI = {
+  staticPath: '/js/',
+  flashUrl: '/statics/FileAPI.flash.swf',
+  flashImageUrl: '/statics/FileAPI.flash.image.swf'
+};
 
 ```
 
